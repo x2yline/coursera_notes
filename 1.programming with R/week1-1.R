@@ -18,3 +18,5 @@ as.vector(x)
 
 x*3 + 100
 my_sqrt <- sqrt(x-1)
+
+info()

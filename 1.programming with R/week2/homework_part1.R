@@ -27,4 +27,3 @@ pollutantmean <- function(directory, pollutant, id=1:332){
   pollutant_sum/pollutant_num
 }
 
-pollutantmean("E:/r/rprog-data-specdata/specdata", "sulfate", 1:10)

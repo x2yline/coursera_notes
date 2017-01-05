@@ -17,3 +17,4 @@ complete <- function(directory, id=1:332){
   }
   df <- data.frame(id, nobs)
 }
+print(complete("E:/r/rprog-data-specdata/specdata",c(2, 4, 8, 10, 12)))

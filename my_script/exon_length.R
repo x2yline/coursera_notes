@@ -1,39 +1,37 @@
 setwd('E:\\r\\biotrainee_demo1')
-data <- read.table('CCDS.current.txt', sep='\t',
-stringsAsFactors=F, header=T)
-head(data)
-exon_num<-function(data){
-  exon_length <- 0
-  all_exons <- NULL
-  pb <- txtProgressBar(min = 0, max = dim(data)[1], style = 3)
-  for (i in 1:dim(data)[1]){
-    setTxtProgressBar(pb, i)
-    # 得到第i行的基因全部信息
-    gene <- as.vector(as.matrix(data[i,]))
-    if (gene[dim(data)[2]-1]!='-'){
-      # 得到第i行基因对应的染色体号
-      chr <- gene[1]
-      # 得到第i行基因对应的exon坐标
-      exon_ranges <- gene[dim(data)[2]-1]
-      # 去除exon坐标范围首末两个中括号
-      exon_ranges <- substr(exon_ranges, start=2, stop=nchar(exon_ranges)-1)
-      # 把坐标分割vector格式为(num1-num2, num3-num4...)
-      # 注意strsplit得到的坐标为list对象需要提取出vector
-      exon_vect <- strsplit(exon_ranges,",")[[1]]
-       for (j in exon_vect){
-         # 把j分割为vector(num1,num2)
-         start_end <- strsplit(j,"-")[[1]]
-         #print(j)
-         record <- paste(chr, ':', as.numeric(start_end[2]), as.numeric(start_end[1]))
-         if (!any(record == all_exons)){
-           exon_length <- exon_length + as.numeric(start_end[2])-as.numeric(start_end[1])
-           all_exons <- c(all_exons, record)
-           }
-         
-       }
-    }
+t1 <- Sys.time()
+directory = 'CCDS.current.txt'
+
+data <- read.table(directory, sep='\t',
+  stringsAsFactors=F, header=T)[c(1,10)]
+
+get_gene <-function(data_item){
+  if (!data_item[2] =='-'){
+    exon_ranges <- data_item[2]
+    exon_ranges <- substr(exon_ranges, start=2, stop=nchar(exon_ranges)-1)
   }
-  close(pb)
-  exon_length
 }
-exon_length <- exon_num(data)
+
+get_exon <- function(gene){
+  exon <- unique(strsplit(gene,", ")[[1]])
+}
+
+get_lenth <- function(exon){
+  loc <- strsplit(exon,"-")[[1]]
+  a <- as.numeric(loc[2])-as.numeric(loc[1])
+}
+
+
+exon_length = 0
+for (i in unique(data[,1])){
+  
+  gene_i <- paste(apply(data[which(data[1]==i & data[2] != '-'),], 1, get_gene),collapse=', ')
+  exon_i <-  get_exon(gene_i)
+  exon_i_length <- sapply(exon_i, get_lenth)
+  exon_length <- exon_length + sum(exon_i_length)
+}
+
+# 耗时长度
+difftime(Sys.time(), t1, units = 'secs')
+
+print(paste('all exons length is',exon_length))

@@ -3,7 +3,7 @@ t1 <- Sys.time()
 directory = 'CCDS.current.txt'
 
 data <- read.table(directory, sep='\t',
-  stringsAsFactors=F, header=T)[c(1,10)]
+                   stringsAsFactors=F, header=T)[c(1,10)]
 
 get_gene <-function(data_item){
   if (!data_item[2] =='-'){
@@ -19,17 +19,30 @@ get_exon <- function(gene){
 get_lenth <- function(exon){
   loc <- strsplit(exon,"-")[[1]]
   a <- as.numeric(loc[2])-as.numeric(loc[1])
+  if (a==0){
+    print(loc)
+  }
+  a
 }
 
 
 exon_length = 0
+exon_length_items = NULL
 for (i in unique(data[,1])){
   
   gene_i <- paste(apply(data[which(data[1]==i & data[2] != '-'),], 1, get_gene),collapse=', ')
   exon_i <-  get_exon(gene_i)
+  print('************************')
+  print(paste('染色体', i, '的无效外显子区域为'))
   exon_i_length <- sapply(exon_i, get_lenth)
   exon_length <- exon_length + sum(exon_i_length)
+  exon_length_items <- c(exon_i_length, exon_length_items)
+  names(exon_length_items)[1:length(exon_i_length)] <- i
 }
+
+hist(exon_length_items, breaks=1000000, 
+  xlim = c(0,500), xlab = '外显子长度', 
+  ylab = '次数', main='外显子长度频数统计')
 
 # 耗时长度
 difftime(Sys.time(), t1, units = 'secs')

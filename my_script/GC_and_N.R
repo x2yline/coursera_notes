@@ -1,6 +1,7 @@
 setwd('E:\\r\\biotrainee_demo\\class 2')
 # 读入数据
-df <- read.csv('demo.txt', header=F, stringsAsFactors=F)
+t1 <- Sys.time()
+df <- read.csv('chr1.fa', header=F, stringsAsFactors=F)
 # index_df 为chr所在的位置
 index_df <- data.frame(begin=which(sapply(df[,1], function(x){
   substr(x, start=1, stop=1)=='>'})))
@@ -22,3 +23,4 @@ rownames(result) = c('N','GC')
 result <- t(result)
 # 取结果前几行
 head(result)
+difftime(Sys.time(), t1, units = 'secs')

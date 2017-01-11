@@ -1,5 +1,6 @@
 source("https://bioconductor.org/biocLite.R")
 biocLite("BSgenome.Hsapiens.UCSC.hg19")
+
 library(Biostrings)
 library(BSgenome.Hsapiens.UCSC.hg19)
 alphabetFrequency(Hsapiens$chrY)

@@ -33,7 +33,7 @@ for i in (list(range(1,23)) + ['X','Y']):
     chromsome += n
 all_info = 'chr,GC_ratio,N_ratio,Length,N,A,T,C,G'
 for i in range(len(chromsome)):
-    data = '\n'+str(chromsome[i]) +',' + "%.5f"%((content[i][-1]+content[i][-2])/sum(content[i][1:])) +','  + "%.5f" %(content[i][1]/(sum(content[i]))) +','  +str((sum(content[i]))) +','  +str((content[i][0])) + ','  +str(content[i][1])+',' +str(content[i][2])+','  +str(content[i][3])+','  +str(content[i][4]) 
+    data = '\n'+str(chromsome[i]) +',' + "%.5f"%((content[i][-1]+content[i][-2])/sum(content[i][1:])) +','  + "%.5f" %(content[i][0]/(sum(content[i]))) +','  +str((sum(content[i]))) +','  +str((content[i][0])) + ','  +str(content[i][1])+',' +str(content[i][2])+','  +str(content[i][3])+','  +str(content[i][4]) 
     all_info += data
 with open('hg19_analysis.csv','w') as f:
     f.write(all_info)

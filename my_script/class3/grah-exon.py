@@ -99,17 +99,17 @@ def count_transcript_and_exon(file_path):
 file_path_human = r'E:\r\biotrainee_demo\class3\Homo_sapiens.GRCh38.87.chr.gtf'
 #gtf_gene_dict1 = count_gtf_gene(file_path1)
 #file_to_write1 = write_to_csv(gtf_gene_dict, file_save = 'gtf_analysis.csv')
-file_path_Alpaca = r'F:\tmp\Vicugna_pacos.vicPac1.87.gtf\Vicugna_pacos.vicPac1.87.gtf'
+file_path_cat = r'F:\tmp\Felis_catus.Felis_catus_6.2.87.chr.gtf\Felis_catus.Felis_catus_6.2.87.chr.gtf'
 #print('Used %.4f s'%(time.clock()-start))   
 file_path_zeb = r'F:\tmp\Danio_rerio.GRCz10.87.chr.gtf\Danio_rerio.GRCz10.87.chr.gtf'
 file_path_mus = r'F:\tmp\Mus_musculus.GRCm38.87.chr.gtf\Mus_musculus.GRCm38.87.chr.gtf'
 
 transcript_human, exon_human = count_transcript_and_exon(file_path_human)
-transcript_Alpaca, exon_Alpaca = count_transcript_and_exon(file_path_Alpaca)
+transcript_cat, exon_cat = count_transcript_and_exon(file_path_cat)
 transcript_zeb, exon_zeb = count_transcript_and_exon(file_path_zeb)
 transcript_mus, exon_mus = count_transcript_and_exon(file_path_mus)
 
-exon_hub = [exon_human, exon_Alpaca, exon_zeb, exon_mus]
+exon_hub = [exon_human, exon_cat, exon_zeb, exon_mus]
 
 
 def list_to_freq(exon):
@@ -136,7 +136,7 @@ i = -1
 
 for exon_item in exon_hub:
     i += 1
-    labels = ['Human','Alpaca','zebra', 'musculus']
+    labels = ['Human','cat','zebrafish', 'mouse']
     colors = ['r', 'g', 'm', 'b']
     exon_range, exon_freq = list_to_freq(exon_item)
     plt.plot(exon_range, exon_freq, colors[i], alpha=1, label=labels[i])

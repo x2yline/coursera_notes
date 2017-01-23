@@ -59,18 +59,18 @@ ATCG_analysis = count_fasta_atcgn(file_path, buffer_size=1024*1024)
 cg_list = []
 chr_id_list = list(range(1,23)) + ['X','Y','M']
 for i in chr_id_list:
-    cg_list.append((ATCG_analysis['CHR'+str(i)]['G']+ATCG_analysis['CHR'+str(i)]['C'])/(ATCG_analysis['CHR'+str(i)]['N']+ATCG_analysis['CHR'+str(i)]['A']+ATCG_analysis['CHR'+str(i)]['T']+ATCG_analysis['CHR'+str(i)]['C']+ATCG_analysis['CHR'+str(i)]['G'])*100)
+    cg_list.append((ATCG_analysis['CHR'+str(i)]['G']+ATCG_analysis['CHR'+str(i)]['C'])/(ATCG_analysis['CHR'+str(i)]['A']+ATCG_analysis['CHR'+str(i)]['T']+ATCG_analysis['CHR'+str(i)]['C']+ATCG_analysis['CHR'+str(i)]['G'])*100)
 import matplotlib.pyplot as plt
 plt.bar(left = range(25), height = cg_list, color='k')
 for i in range(len(cg_list)):
-    plt.text( x=i, y=cg_list[i]+.35,s=str(round(cg_list[i])))
+    plt.text( x=i-0.1, y=cg_list[i]+.35,s=str(round(cg_list[i])))
 plt.title('GC content for hg19 genome')
 plt.ylabel('GC content (%)')
 pos = []
 for i in range(len(chr_id_list)):
     pos.append(i + 0.35)
 plt.xticks(pos, list(range(1,23)) + ['X','Y','MT'], fontsize=8)
-plt.xlim(-0.35, )
+plt.xlim(-0.2, )
 plt.ylim(0, 100)
-plt.savefig('F:\gc.png',dpi=600)
+plt.savefig('F:\hg19_gc.png',dpi=600)
 plt.show()

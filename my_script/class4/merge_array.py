@@ -55,13 +55,13 @@ def merge_array(file_list, dirs = '.' ):
     return my_dict
 
 def write_dict_to_csv(my_dict, path = '.\\merged.csv'):
-    
-    content = ''
-    for i in my_dict.keys():
-        content += i + ','
-        content += ','.join(my_dict[i]) + '\n'
+    with open(path, 'w') as f:
+        pass
     with open(path,'a') as f:
-        f.write(content)
+        for i in my_dict.keys():
+            content = i + ','
+            content += ','.join(my_dict[i]) + '\n'
+            f.write(content)
         
 my_dict = merge_array(file_list, dirs = untar_path)
 write_dict_to_csv(my_dict, path = 'E:\\merged_array.csv')

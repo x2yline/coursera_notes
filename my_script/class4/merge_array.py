@@ -11,21 +11,6 @@ def untar(fname, untar_path):
     t = tarfile.open(fname, 'r')
     t.extractall(path = untar_path)
     t.close()
-     
-    
-    
-# fname为GSE48213_RAW.tar所在绝对路径
-# untar_path为解压后文件所在路径，可任意设定
-fname = r'G:\GSE48213_RAW.tar'
-untar_path = r'G:\GSE48213_RAW'
-
-
-
-untar(fname, untar_path)
-file_list = []
-for j in os.listdir(r'G:\GSE48213_RAW'):
-    if j[-3:] == '.gz':
-        file_list.append(j)
 
 def merge_array(file_list, dirs = '.' ):
     '''函数输入file_list为要和并的距阵文件名列表，可以是txt或gz文件
@@ -62,6 +47,19 @@ def write_dict_to_csv(my_dict, path = '.\\merged.csv'):
             content = i + ','
             content += ','.join(my_dict[i]) + '\n'
             f.write(content)
+    with open(path, 'r') as f:
+        content = f.read().replace(",", "\t")
+    return content
+# fname为GSE48213_RAW.tar所在绝对路径
+# untar_path为解压后文件所在路径，可任意设定
+fname = r'G:\GSE48213_RAW.tar'
+untar_path = r'G:\GSE48213_RAW'
+
+untar(fname, untar_path)
+file_list = []
+for j in os.listdir(r'G:\GSE48213_RAW'):
+    if j[-3:] == '.gz':
+        file_list.append(j)
         
 my_dict = merge_array(file_list, dirs = untar_path)
-write_dict_to_csv(my_dict, path = 'E:\\merged_array.csv')
+content = write_dict_to_csv(my_dict, path = 'E:\\merged_array.csv')

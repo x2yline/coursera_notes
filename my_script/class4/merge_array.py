@@ -1,5 +1,4 @@
 import os
-from collections import OrderedDict
 
 def untar(fname, untar_path):
     ''' 函数输入为fname为tar或gz文件的绝对路，
@@ -16,7 +15,7 @@ def merge_array(file_list, dirs = '.' ):
     '''函数输入file_list为要和并的距阵文件名列表，可以是txt或gz文件
     dirs为文所在的路径，默认为当前路径
     输出为有序字典，keys为行名，values为对应行的数值列表'''
-    my_dict = OrderedDict()
+    my_dict = {}
     counts = -1
     for i in file_list:
         counts += 1
@@ -43,12 +42,14 @@ def write_dict_to_csv(my_dict, path = '.\\merged.csv'):
     with open(path, 'w') as f:
         pass
     with open(path,'a') as f:
-        for i in my_dict.keys():
+        # 写上表头
+        f.write(','+','.join(my_dict[sorted(my_dict.keys())[-1]]) + '\n')
+        for i in sorted(my_dict.keys())[:-1]:
             content = i + ','
             content += ','.join(my_dict[i]) + '\n'
             f.write(content)
     with open(path, 'r') as f:
-        content = f.read().replace(",", "\t")
+        content = f.read(10000).replace(",", "\t")
     return content
 # fname为GSE48213_RAW.tar所在绝对路径
 # untar_path为解压后文件所在路径，可任意设定

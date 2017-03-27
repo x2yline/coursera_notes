@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 import os
-
+ 
 def density_plot(data_list,xlabel,title):
     fig = plt.figure(1)
     fig.patch.set_facecolor('w')
@@ -14,7 +14,7 @@ def density_plot(data_list,xlabel,title):
     x = np.arange(min(data_list),max(data_list),data_range/40)
     ax.plot(x, density(x),'b-')
     # axis seting
-    ax.set_xlim([min(data_list)-data_range/10,max(data_list)+data_range/10])
+    ax.set_xlim([int(min(data_list)-data_range/10),int(max(data_list)+data_range/10)])
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.get_xaxis().tick_bottom()
@@ -24,6 +24,7 @@ def density_plot(data_list,xlabel,title):
     ax.spines['left'].set_position(('outward', 10))
     ax.spines['bottom'].set_position(('outward', 10))
     ax.set_xlabel(xlabel)
+    ax.set_xticks(np.linspace(int(min(data_list)-data_range/10),int(max(data_list)+data_range/10),6))
     # text seting
     ax_stats = fig.add_axes([0.76,0.2,0.2,0.6])
     ax_stats.set_axis_off()
@@ -35,7 +36,7 @@ def density_plot(data_list,xlabel,title):
     fig.savefig('density_'+xlabel, dpi=150)
     plt.show()
     print('\nFigure saved in {0}\n'.format(str(os.path.join(os.getcwd(),'density_'+xlabel))))
-    
+     
 def cut_53(file, cut_5, cut_3):
     with open(file, 'r') as f:
         new_file = ''
@@ -58,8 +59,8 @@ def cut_53(file, cut_5, cut_3):
             else:
                 break
     return(new_file) 
-                
-
+                 
+ 
 def fastq2fasta(file):
     new_file = ''
     with open(file,'r') as f:
@@ -74,7 +75,7 @@ def fastq2fasta(file):
             else:
                 break
     return(new_file)
-
+ 
 def length_count(file):
     length_list = []
     with open(file,'r') as f:
@@ -91,12 +92,12 @@ def length_count(file):
                 break
     print('\n\nPloting...\n')
     density_plot(length_list, xlabel='length',title='Distribution of length')
-    result = ('\nmedian length is {0}\nmaxium length is {1}\nminium length is {2}\n'.format(sum(length_list)/len(length_list),max(length_list),min(length_list)))
+    result = ('\nmean length is {0}\nmaxium length is {1}\nminium length is {2}\n'.format(sum(length_list)/len(length_list),max(length_list),min(length_list)))
     print(result)
     plt.show()
     return(result)
-
-
+ 
+ 
 def count_GCN(file):
     print("Waiting for a moment:")
     count_dict = {}
@@ -121,8 +122,8 @@ def count_GCN(file):
     print("Ploting...\n")
     density_plot(gc_list, xlabel="GC content",title="Distribution of GC content")
     return(count_dict)
-
-
+ 
+ 
 def main():
     import argparse
     parser = argparse.ArgumentParser()
@@ -153,12 +154,9 @@ def main():
             raise ValueError('cut value can not be negative!!!')
     if cut3 + cut5 != 0:
         cut_53(args.file, cut5,cut3)
-
-
-
-
+ 
+ 
+ 
+ 
 if __name__ == '__main__':
     main()
-
-
-

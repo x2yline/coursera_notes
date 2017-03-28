@@ -1,4 +1,3 @@
-# /usr/bin/python
 # encoding=utf-8
 import matplotlib.pyplot as plt
 import numpy as np
@@ -76,53 +75,66 @@ def fastq2fasta(file):
                 break
     return(new_file)
  
-def length_count(file):
+def length_count(file, buffer=2400*2400):
     length_list = []
-    with open(file,'r') as f:
-        print("Waiting for a moment:")
+    with open(file) as f:
+        head = ''
+        base_num = 0
         while True:
-            line1 = f.readline()
-            if line1.startswith('@'):
-                print(line1[1:-1],end='\r')
-                line2 = f.readline().strip()
-                skip = f.readline()
-                skip = f.readline()
-                length_list.append(len(line2))
-            else:
+            a = f.read(buffer)
+            raw_list = (head + a).split('\n@')
+            deal_list = raw_list[:-1]
+            head = raw_list[-1]
+            for record in deal_list:
+                if record:
+                    sequence = record.split('\n')[1].upper().strip()
+                    length_list.append(len(sequence))
+                    base_num += len(sequence)
+            if not len(a):
                 break
-    print('\n\nPloting...\n')
+        if head:
+            record = head
+            sequence = record.split('\n')[1].upper().strip()
+            length_list.append(len(sequence))
+            base_num += len(sequence)
+
     density_plot(length_list, xlabel='length',title='Distribution of length')
-    result = ('\nmean length is {0}\nmaxium length is {1}\nminium length is {2}\n'.format(sum(length_list)/len(length_list),max(length_list),min(length_list)))
+    result = ('\nMean length is {0}\nmaxium length is {1}\nminium length is {2}\n'.format(sum(length_list)/len(length_list),max(length_list),min(length_list)))
     print(result)
-    plt.show()
     return(result)
  
  
-def count_GCN(file):
-    print("Waiting for a moment:")
-    count_dict = {}
-    count_dict['GC'] = 0
-    count_dict['N'] = 0
-    with open(file,'r') as f:
+def GC_count(file, buffer=2400*3200):
+    with open(file) as f:
+        head = ''
         gc_list = []
+        gc_num = 0
+        base_num = 0
         while True:
-            line1 = f.readline()
-            if line1:
-                print(line1[1:-1],end='\r')
-                line2 = f.readline().strip().upper()
-                skip = f.readline()
-                skip = f.readline()
-                gc_list.append((line2.count("G")+line2.count("C"))/len(line2))
-                count_dict['GC'] += line2.count('G') + line2.count('C')
-                count_dict['N'] += len(line2)
-            else:
+            a = f.read(buffer)
+            raw_list = (head + a).split('\n@')
+            deal_list = raw_list[:-1]
+            head = raw_list[-1]
+            for record in deal_list:
+                if record:
+                    sequence = record.split('\n')[1].upper().strip()
+                    gc_item = sequence.count("G")+sequence.count("C")
+                    gc_list.append(gc_item/len(sequence))
+                    gc_num += gc_item
+                    base_num += len(sequence)
+            if not len(a):
                 break
-        count_dict['GC'] = count_dict['GC']/count_dict['N']
-    print("\n\nThe GC count is {0}\nThe number of bases is {1}".format(count_dict["GC"],count_dict["N"]))
-    print("Ploting...\n")
-    density_plot(gc_list, xlabel="GC content",title="Distribution of GC content")
-    return(count_dict)
- 
+        if head:
+            record = head
+            sequence = record.split('\n')[1].upper().strip()
+            gc_item = sequence.count("G")+sequence.count("C")
+            gc_list.append(gc_item/len(sequence))
+            gc_num += gc_item
+            base_num += len(sequence)
+    print("\nThe GC count is {0}\nThe number of bases is {1}\nThe number of sequences is {2}".format(gc_num/base_num,base_num,len(gc_list)))
+    #print("Ploting...\n")
+    density_plot(gc_list, xlabel="Mean GC content",title="GC distribution over all sequences")
+    return(0)
  
 def main():
     import argparse
@@ -137,7 +149,9 @@ def main():
     if args.fasta:
         fastq2fasta(args.file)
     if args.count:
-        count_GCN(args.file)
+        #print("Waiting for about 20 seconds...\n")
+        GC_count(args.file)
+
     if args.length:
         length_count(args.file)
     cut3 = 0

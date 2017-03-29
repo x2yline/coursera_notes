@@ -60,20 +60,29 @@ def cut_53(file, cut_5, cut_3):
     return(new_file) 
                  
  
-def fastq2fasta(file):
-    new_file = ''
+def fastq2fasta(file, buffer=2048*3069):
+    head = ''
     with open(file,'r') as f:
         while True:
-            line1 = f.readline()
-            if line1:
-                line2 = f.readline()
-                skip = f.readline()
-                skip = f.readline()
-                print('>'+line1[1:]+line2, end='')
-                new_file += '>'+line1[1:]+line2
-            else:
+            raw_tmp = f.read(buffer)
+            tmp = (head + raw_tmp).split('\n@')
+            tmp_records = tmp[:-1]
+            head = tmp[-1]
+            for i in tmp_records:
+                if i:
+                    if i.strip().startswith('@'):
+                        i = i.strip()[1:]
+                    fasta = '>'+'\n'.join(i.strip().split('\n')[0:2])
+                    print(fasta)
+            if not raw_tmp:
                 break
-    return(new_file)
+        if head:
+            for i in head.split('\n@'):
+                if i:
+                    if i.strip().startswith('@'):
+                        i = i.strip()[1:]
+                    fasta = '>'+'\n'.join(i.split('\n')[0:2])
+                    print(fasta)
  
 def length_count(file, buffer=2400*2400):
     length_list = []

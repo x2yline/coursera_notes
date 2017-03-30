@@ -36,28 +36,40 @@ def density_plot(data_list,xlabel,title):
     plt.show()
     print('\nFigure saved in {0}\n'.format(str(os.path.join(os.getcwd(),'density_'+xlabel))))
      
-def cut_53(file, cut_5, cut_3):
+def cut_53(file, cut_5, cut_3,buffer=2048*3096):
     with open(file, 'r') as f:
-        new_file = ''
+        head = ''
         while True:
-            line1 = f.readline().strip()
-            if line1:
-                type_id = line1[0]
-                if line1.startswith('@') or line1.startswith('+'):
-                    line2 = f.readline().strip()
-                    line1 = line1[:line1.find('length=')+7] + str(len(line2)-cut_3-cut_5)
-                    new_file = new_file + line1 + '\n'
-                    if len(line2)-cut_5 <= cut_3:
+            raw_tmp = f.read(buffer)
+            tmp = (head + raw_tmp).split('\n@')
+            tmp_records = tmp[:-1]
+            head = tmp[-1]
+            for i in tmp_records:
+                if not i.startswith('@'):
+                    i = '@' + i
+                if i:
+                    i = i.split('\n')
+                    print(i[0])
+                    if len(i[1])-cut_5 <= cut_3:
                         raise ValueError('cut too much')
-                    else:
-                        line2 = line2[cut_5:-(cut_3)]
-                        if type_id:#== '@':
-                            print(line1)
-                            print(line2)
-                        new_file = new_file + line2 + '\n'
-            else:
+                    print(i[1][cut_5:-(cut_3)])
+                    print(i[2])
+                    print(i[3][cut_5:-(cut_3)])
+            if not raw_tmp:
                 break
-    return(new_file) 
+        if head:
+            if not head.startswith('@'):
+                i = '@' + head
+            else:
+                i = head
+            i = i.split('\n')
+            print(i[0])
+            if len(i[1])-cut_5 <= cut_3:
+                raise ValueError('cut too much')
+            print(i[1][cut_5:-(cut_3)])
+            print(i[2])
+            print(i[3][cut_5:-(cut_3)])
+    return(0)
                  
  
 def fastq2fasta(file, buffer=2048*3069):
@@ -177,9 +189,6 @@ def main():
             raise ValueError('cut value can not be negative!!!')
     if cut3 + cut5 != 0:
         cut_53(args.file, cut5,cut3)
- 
- 
- 
  
 if __name__ == '__main__':
     main()

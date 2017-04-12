@@ -185,14 +185,87 @@ def find_overlap_gene_list(chr_info, chromosome, pos_start, pos_end):
     return(target_gene_list)
 
 
+def draw_pos_gene(overlap_genes, chr_info, pos_start, pos_end, chromosome):
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as mpatches
+    import re
+    import numpy as np
+    import matplotlib.patches as patches
+    import matplotlib.transforms as transforms
+    if len(overlap_genes) > 0:
+        gene_info_list = []
+        for i in overlap_genes:
+            print(i)
+            gene_i = re.search(str(chromosome)+'\t.*?\tgene\t(.*?)\t(.*?)\t.*?\t(.*?)\t.*?gene_name "'+i+'";',chr_info)
+            gene_info_list.append(chr_info[slice(gene_i.span()[0], gene_i.span()[1])].split('\t')[3:5]+chr_info[slice(gene_i.span()[0], gene_i.span()[1])].split('\t')[6:7]+[i])
+        max_x = max([int(i[1]) for i in gene_info_list]+[int(i[0]) for i in gene_info_list]+[pos_start, pos_end])
+        min_x = min([int(i[1]) for i in gene_info_list]+[int(i[0]) for i in gene_info_list]+[pos_start, pos_end])
+        fig = plt.figure(1)
+        fig.patch.set_alpha(1)
+        fig.patch.set_facecolor('w')
+        ax = fig.add_axes([0.2,0.2,0.6,0.6])
+        y = 0
+        ax.set_ylim([0, (len(overlap_genes)+1)*0.1])
+        ax.spines['top'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.get_yaxis().set_visible(False)
+        ax.get_xaxis().tick_bottom()
+        ax.get_yaxis().tick_left()
+        ax.set_xlim([min_x,max_x])
+        ax.set_xticks([int(k) for k in np.linspace(min_x,max_x, 4)])
+        ax.set_xticklabels([int(k) for k in np.linspace(min_x,max_x, 4)])
+        ax.get_xaxis().set_tick_params(direction='out')
+        ax.tick_params(axis=u'y', which=u'both',length=0)
+        trans = transforms.blended_transform_factory(
+        ax.transData, ax.transAxes)
+        rect = patches.Rectangle((pos_start,0), width=pos_end-pos_start, height=1,
+                              transform=trans, color='yellow', alpha=0.5)
+        ax.add_patch(rect)
+        ax.tick_params(axis='x', colors='gray')
+        ax.spines['bottom'].set_color('gray')
+        for i in gene_info_list:
+            if i[2] == '+':
+                arr = '->'
+                text_x = i[0]
+                ha = 'right'
+            else:
+                arr = '<-'
+                text_x = i[1]
+                ha = 'left'
+                
+            y += 0.1
+            # define arrow for genes
+            arrow= mpatches.FancyArrowPatch(
+                (int(i[0]), y),
+                (int(i[1]), y),
+                arrowstyle= arr,
+                mutation_scale=25, lw=1, color='blue',antialiased=True, alpha=0.6)
+            ax.add_patch(arrow)
+            ax.text(text_x,y, i[-1] ,style='italic', ha=ha, va='center', color='blue', fontsize=200*6/(200+len(overlap_genes)*0.1))
+
+    fig.suptitle('\n\n\nchr' + str(chromosome)+ ': ' + str(pos_start) +'-'+str(pos_end), fontsize=10, color='red')
+    png_path = str(pos_start)+'-'+str(pos_end)+'.png'
+    fig.savefig(png_path, dpi=150)
+    return(png_path)
+
+
+
+
+
+
+
 
 def main(chromosome, pos_start, pos_end):
     os.chdir(r'E:\r\biotrainee_demo\class10')
     file = 'Homo_sapiens.GRCh38.87.chr.gtf'
     chr_info = get_chr_info(file, chromosome)
     overlap_genes = find_overlap_gene_list(chr_info, chromosome, pos_start, pos_end)
-    for i in overlap_genes:
-        draw_gene_structure(i,find_target_data(i, chr_info),pos_start,pos_end)
+    if len(overlap_genes) == 1:
+        for i in overlap_genes:
+            draw_gene_structure(i,find_target_data(i, chr_info),pos_start,pos_end)
+    else:
+        draw_pos_gene(overlap_genes, chr_info, int(pos_start), int(pos_end), int(chromosome))
     print('\nThere are %d genes in the position\n'%len(overlap_genes))
 
 if __name__ == '__main__':
@@ -202,9 +275,9 @@ if __name__ == '__main__':
     if not chromosome:
         chromosome = 1
     if not pos_start:
-        pos_start = 2588000
+        pos_start = 2075000
     if not pos_end:
-        pos_end = 2590000
+        pos_end = 2930999
     main(int(chromosome), int(pos_start), int(pos_end))
     
     

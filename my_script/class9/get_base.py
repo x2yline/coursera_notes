@@ -1,5 +1,5 @@
 
-file = 'hg19.fa'
+file = r'E:\r\biotrainee_demo\class2\hg19.fa'
 chromosome = 5#int(input("Please enter the chromosome:\n"))
 base_pos = 8397383#int(input("Please enter the base position:\n"))
 with open(file, 'r') as f:
@@ -25,15 +25,13 @@ with open(file, 'r') as f:
                 base_value = chr_begin[base_pos-1]
                 break
             else:
-                while True:
-                    chr_skip1 = f.read(base_pos-base_begin_pos-1).replace('\n','').replace(' ','')
-                    chr_skip2 = f.read(base_pos-base_begin_pos-1).replace('\n','').replace(' ','')
-                    base_value = chr_skip2[base_pos-base_begin_pos-len(chr_skip1)-1]
-                    end = True
-                    if '>' in chr_skip1 or '>' in chr_skip2[:base_pos-base_begin_pos-len(chr_skip1)]:
-                        print("\nThe position do not exist!!!!\n")
-                        end = False
-                        break
+                chr_skip1 = f.read(base_pos-base_begin_pos-1).replace('\n','').replace(' ','')
+                chr_skip2 = f.read(base_pos-base_begin_pos-1).replace('\n','').replace(' ','')
+                base_value = chr_skip2[base_pos-base_begin_pos-len(chr_skip1)-1]
+                end = True
+                if '>' in chr_skip1 or '>' in chr_skip2[:base_pos-base_begin_pos-len(chr_skip1)]:
+                    print("\nThe position do not exist!!!!\n")
+                    end = False
                     break
         if got == 1 or len(buffer)==0:
             break
